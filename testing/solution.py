@@ -45,4 +45,3 @@ def fruit_order(small_baskets: int, big_baskets: int, ordered_amount: int) -> in
         return ordered_amount - (5*big_baskets)
     else:
         return -1
-print(fruit_order(3,1,10))
