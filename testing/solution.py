@@ -16,7 +16,6 @@ def students_study(time: int, coffee_needed: bool) -> bool:
         return True
     return False
         
-print(students_study(1,True))
 def lottery(a: int, b: int, c: int) -> int:
     """
     Return Lottery victory result 10, 5, 1, or 0 according to input values.
@@ -41,7 +40,19 @@ def fruit_order(small_baskets: int, big_baskets: int, ordered_amount: int) -> in
     (4, 1, 9) -> 4
     (3, 1, 10) -> -1
     """
-    if small_baskets + (5*big_baskets) == ordered_amount:
-        return ordered_amount - (5*big_baskets)
+    if ordered_amount % 5 == 0 and (ordered_amount // 5) <= big_baskets:
+        return 0
+    elif small_baskets >= ordered_amount and ordered_amount >= 0:
+        return ordered_amount
+    elif small_baskets + (big_baskets * 5) == ordered_amount:
+        return small_baskets
     else:
-        return -1
+        for bigbas in range(big_baskets):
+            weight = (bigbas + 1) * 5
+            if weight == ordered_amount:
+                return 0
+            for smallbas in range(small_baskets):
+                weight += 1
+                if weight == ordered_amount:
+                    return smallbas + 1
+    return -1
