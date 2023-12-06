@@ -62,3 +62,76 @@ def test__lottery__all_adiff():
 
 def test__lottery__all_diff():
     assert lottery(1,2,3) is 1
+    
+
+def test__fruit_order__all_zero():
+    assert fruit_order(0, 0, 0) == 0
+
+def test__fruit_order__zero_big():
+    assert fruit_order(5, 0, 0) == 0
+
+def test__fruit_order__zero_small():
+    assert fruit_order(0, 3, 0) == 0
+
+def test__fruit_order__others_not_zero():
+    assert fruit_order(4, 1, 0) == 0
+
+def test__fruit_order__only_big_exact_match():
+    assert fruit_order(0, 6, 30) == 0
+
+def test__fruit_order__only_big_not_enough_but_multiple_of_5():
+    assert fruit_order(0, 10, 50) == 0
+
+def test__fruit_order__only_big_not_enough():
+    assert fruit_order(0, 3, 25) == -1
+
+def test__fruit_order__only_big_more_than_required_match():
+    assert fruit_order(0, 10, 20) == 0
+
+def test__fruit_order__only_big_more_than_required_no_match():
+    assert fruit_order(0, 9, 27) == -1
+
+def test__fruit_order__only_small_match_more_than_5_smalls():
+    assert fruit_order(9, 0, 9) == 9
+
+def test__fruit_order__only_small_not_enough_more_than_5_smalls():
+    assert fruit_order(8, 0, 9) == -1
+
+def test__fruit_order__only_small_exact_match():
+    assert fruit_order(1, 0, 1) == 1
+
+def test__fruit_order__only_small_not_enough():
+    assert fruit_order(1, 0, 3) == -1
+
+def test__fruit_order__only_small_more_than_required():
+    assert fruit_order(5, 0, 3) == 3
+
+def test__fruit_order__match_with_more_than_5_smalls():
+    assert fruit_order(10, 10, 60) == 10
+
+def test__fruit_order__all_positive_exact_match():
+    assert fruit_order(50, 10, 100) == 50
+
+def test__fruit_order__use_all_smalls_some_bigs():
+    assert fruit_order(1, 1, 1) == 1
+
+def test__fruit_order__use_some_smalls_some_bigs():
+    assert fruit_order(120, 120, 124) == 4
+
+def test__fruit_order__not_enough():
+    assert fruit_order(1, 1, 60) == -1
+
+def test__fruit_order__enough_bigs_not_enough_smalls():
+    assert fruit_order(4, 11, 55) == 0
+
+def test__fruit_order__enough_smalls_not_enough_bigs():
+    assert fruit_order(10, 1, 19) == -1
+
+def test__fruit_order__not_enough_with_more_than_5_smalls():
+    assert fruit_order(30, 1, 60) == -1
+
+def test__fruit_order__enough_bigs_not_enough_smalls_large_numbers():
+    assert fruit_order(2, 600, 1158) == -1
+
+def test__fruit_order__match_large_numbers():
+    assert fruit_order(200, 200, 1200) == 200
