@@ -59,7 +59,6 @@ def read_from_file_into_list(filename: str) -> list:
     with open(filename, 'r') as f:
         for line in f:
             client = line.split(',')
-            print(lst)
             lst.append(Client(client[0], client[1], int(client[2]), int(client[3]), int(client[4])))
     return lst
     pass
@@ -74,11 +73,11 @@ def filter_by_bank(filename: str, bank: str) -> list:
     :return: filtered list of people.
     """
     inbank = []
-    with open(filename, 'r') as f:
-        for line in f:
-            client = line.split(',')
-            if bank == client[1]:
-                inbank.append(client[0])
+    clients = read_from_file_into_list(filename)
+    most = None
+    for i in clients:
+        if bank == i.bank:
+            inbank.append(i)
     return inbank
     pass
 
@@ -92,20 +91,19 @@ def largest_earnings_per_day(filename: str) -> Optional[Client]:
     :param filename: name of file to get info from.
     :return: client with largest earnings.
     """
-    lst = []
-    lastam = 0
-    lastag = 0
-    largest = ""
-    with open(filename, 'r') as f:
-        for line in f:
-            client = line.split(',')
-            earnings = ((int(client[4]) - int(client[3])) / int(client[2]))
-            if earnings > lastam:
-                largest = client[0]
-                lastag = int(client[2])
-            elif earnings == lastam and int(client[2]) < lastag:
-                largest = client[0]
-    return largest
+    clients = read_from_file_into_list(filename)
+    most = None
+    for i in clients:
+        earnings = i.earnings_per_day()
+        if earnings > 0:
+            if most == None:
+                most = i
+            elif earnings >= most.earnings_per_day():
+                if earnings > most.earnings_per_day():
+                    most = i
+                elif earnings == most.earnings_per_day() and most.account_age > i.account_age:
+                    most = i
+    return most
 
 
 def largest_loss_per_day(filename: str) -> Optional[Client]:
@@ -117,22 +115,17 @@ def largest_loss_per_day(filename: str) -> Optional[Client]:
     :param filename: name of file to get info from.
     :return: client with largest loss.
     """
-    lst = []
-    lastam = 0
-    lastag = 0
-    largest = ""
-    with open(filename, 'r') as f:
-        for line in f:
-            client = line.split(',')
-            earnings = ((int(client[4]) - int(client[3])) / int(client[2]))
-            if earnings < lastam:
-                largest = client[0]
-                lastag = int(client[2])
-            elif earnings == lastam and int(client[2]) < lastag:
-                largest = client[0]
-    return largest
-
-    pass
+    
+    clients = read_from_file_into_list(filename)
+    most = None
+    for i in clients:
+        earnings = i.earnings_per_day()
+        if earnings < 0:
+            if most == None:
+                most = i
+            elif most.account_age > i.account_age and earnings <= most.earnings_per_day():
+                most = i
+    return most
 
 
 if __name__ == '__main__':
