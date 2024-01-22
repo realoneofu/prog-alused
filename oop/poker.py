@@ -17,7 +17,7 @@ class Card:
         "2 of hearts" or "Q of spades"
 
         """
-        return self.value + " of " self.suit
+        return f"{self.value} of {self.suit}"
 
 
 class Hand:
@@ -25,6 +25,7 @@ class Hand:
 
     suits = ["diamonds", "clubs", "hearts", "spades"]
     values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+    dict_values = {"2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "J":11, "Q":12, "K":13, "A":14}
 
     def __init__(self):
         """Initialize Hand."""
@@ -41,7 +42,10 @@ class Hand:
         """
         if len(self.cards) >= 5:
             return False
-        if not Card in self.cards and (card.value in values and card.suit in suits):
+        for cardd in self.cards:
+            if cardd.value == card.value and cardd.suit == card.suit:
+                return False
+        if card not in self.cards and (card.value in self.values and card.suit in self.suits):
             return True
         return False
 
@@ -63,7 +67,6 @@ class Hand:
         if card in self.cards:
             return True
         return False
-        raise NotImplementedError
 
     def remove_card(self, card: Card):
         """
@@ -73,12 +76,14 @@ class Hand:
         """
         if self.can_remove_card(card):
             self.cards.remove(card)
-        raise NotImplementedError
 
     def get_cards(self):
         """Return a list of cards as objects."""
-        return self.cards
-        raise NotImplementedError
+        for card in self.cards:
+            if card.value in self.dict_values.keys():
+                card.value = self.dict_values[card.value]
+        ccards = sorted(self.cards, key = lambda cards : cards.value,reverse = False)
+        return ccards
 
     def is_straight(self):
         """
@@ -94,7 +99,18 @@ class Hand:
         For the sake of simplicity - A 2 3 4 5 will not be tested.
         You can always consider A to be the highest ranked card.
         """
-        raise NotImplementedError
+        if len(self.get_cards()) == 5:
+            lowest = None
+            for card in self.get_cards():
+                if lowest == None:
+                    lowest = card.value
+                else:
+                    if card.value != lowest + 1:
+                        return False
+                    else:
+                        lowest = card.value
+            return True
+        return False
 
     def is_flush(self):
         """
@@ -102,7 +118,16 @@ class Hand:
 
         In a flush hand all cards are the same suit. Their number value is not important here.
         """
-        raise NotImplementedError
+        if len(self.get_cards()) == 5:
+            lastsuit = None
+            for card in self.get_cards():
+                if lastsuit == None:
+                    lastsuit = card.suit
+                else:
+                    if lastsuit != card.suit:
+                        return False
+            return True
+        return False
 
     def is_straight_flush(self):
         """
@@ -111,7 +136,9 @@ class Hand:
         Such a hand is both straight and flush at the same time.
 
         """
-        raise NotImplementedError
+        if self.is_flush() and self.is_straight():
+            return True
+        return False
 
     def is_full_house(self):
         """
@@ -122,7 +149,28 @@ class Hand:
         2 2 2 6 6
         K J K J K
         """
-        raise NotImplementedError
+        c1_checkval = None
+        c1_amount = 0
+        for card in self.get_cards():
+            if c1_checkval == None:
+                c1_checkval = card.value
+                c1_amount += 1
+            else:
+                if card.value == c1_checkval:
+                    c1_amount += 1
+        c2_checkval = None
+        c2_amount = 0
+        for card in self.get_cards():
+            if card.value != c1_checkval:
+                if c2_checkval == None:
+                    c2_checkval = card.value
+                    c2_amount += 1
+                else:
+                    if card.value == c2_checkval:
+                        c2_amount += 1
+        if c1_amount == 3 and c2_amount == 2 or c2_amount == 3 and c1_amount == 2:
+            return True
+        return False
 
     def is_four_of_a_kind(self):
         """
@@ -133,7 +181,16 @@ class Hand:
         9 4 4 4 4
 
         """
-        raise NotImplementedError
+        cards = self.get_cards()
+        count = {}
+        for card in cards:
+            if card.value not in count:
+                count[card.value] = 0
+            count[card.value] += 1
+        if len(count) == 2 and set(count.values()) == set([1,4]):
+            return True
+        return False
+            
 
     def is_three_of_a_kind(self):
         """
@@ -144,7 +201,15 @@ class Hand:
         5 5 1 5 2
 
         """
-        raise NotImplementedError
+        cards = self.get_cards()
+        count = {}
+        for card in cards:
+            if card.value not in count:
+                count[card.value] = 0
+            count[card.value] += 1
+        if 3 in list(count.values()):
+            return True
+        return False
 
     def is_pair(self):
         """
@@ -155,7 +220,15 @@ class Hand:
         8 7 6 6 5
 
         """
-        raise NotImplementedError
+        cards = self.get_cards()
+        count = {}
+        for card in cards:
+            if card.value not in count:
+                count[card.value] = 0
+            count[card.value] += 1
+        if 2 in list(count.values()):
+            return True
+        return False
 
     def get_hand_type(self):
         """
@@ -173,7 +246,24 @@ class Hand:
         "high card" - None of the above
 
         """
-        raise NotImplementedError
+        if len(self.get_cards()) < 5:
+            return None
+        if self.is_straight_flush() == True:
+            return "straight flush"
+        elif self.is_straight() == True:
+            return "straight"
+        elif self.is_flush() == True:
+            return "flush"
+        elif self.is_four_of_a_kind() == True:
+            return "four of a kind"
+        elif self.is_full_house() == True:
+            return "full house"
+        elif self.is_three_of_a_kind() == True:
+            return "three of a kind"
+        elif self.is_pair() == True:
+            return "pair"
+        return "high card"
+        
 
     def __repr__(self):
         """
@@ -189,6 +279,9 @@ class Hand:
 
         Order of the cards is not important.
         """
+        if self.get_hand_type() != None:
+            return f"I got a {self.get_hand_type()} with cards: {self.get_cards()}."
+        return f"I'm holding {self.get_cards()}."
         raise NotImplementedError
 
 
