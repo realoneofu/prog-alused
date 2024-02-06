@@ -17,9 +17,7 @@ class Tweet:
         self.content = content
         self.time = time
         self.retweets = retweets
-        self.hasthetagofthecertaintrend = None
-        if "#" in content.split()[-1]:
-            self.hasthetagofthecertaintrend = content.split()[-1]
+        
 
 
 def find_fastest_growing(tweets: list) -> Tweet:
@@ -62,13 +60,14 @@ def sort_by_popularity(tweets: list) -> list:
     :return: List of tweets by popularity
     """
     best = []
-    for tabby in tweets:
-        best.append([tabby, tabby.retweets, tabby.time])
+    for twt in tweets:
+        best.append([twt, twt.retweets, twt.time])
     
-    s = []
-    for aba in sorted(best, key = lambda twt : (twt[1]*-1, twt[2])):
-        s.append(aba[0])
-    return s
+    sortedt = sorted(best, key=lambda x:(x[1]*-1, x[2]))
+    bestest = []
+    for u in sortedt:
+        bestest.append(u[0])
+    return bestest
 
 
 def filter_by_hashtag(tweets: list, hashtag: str) -> list:
@@ -78,14 +77,10 @@ def filter_by_hashtag(tweets: list, hashtag: str) -> list:
     Return a list of all tweets that contain given hashtag.
 
     :param tweets: Input list of tweets.
-    :param hashtag: Hashtag to filter by.
+    :param hashtag: hashtag to filter by.
     :return: Filtered list of tweets.
     """
-    intwt = []
-    for twt in tweets:
-        if twt.content.find(hashtag):
-            intwt.append(twt)
-    return intwt
+    return [twt for twt in tweets if hashtag in twt.content]
     pass
 
 
@@ -93,31 +88,27 @@ def sort_hashtags_by_popularity(tweets: list) -> list:
     """
     Sort hashtags by popularity.
 
-    Hashtags must be sorted in descending order.
+    hashtags must be sorted in descending order.
     A hashtag's popularity is the sum of its tweets' retweets.
     If two hashtags are equally popular, sort by alphabet from A-Z to a-z (upper case before lower case).
     >Tweet1 has 21 retweets and has common hashtag.
     >Tweet2 has 19 retweets and has common hashtag.
     >The popularity of that hashtag is 19 + 21 = 40.
 
-    :param tweets: Input list of tweets.
+    :param tweets: Input list of tweets
     :return: List of hashtags by popularity.
     """
-    hashtag = {}
-    for automatedservicenotification in tweets:
-        if automatedservicenotification.hasthetagofthecertaintrend != None:
-            if automatedservicenotification.hasthetagofthecertaintrend not in hashtag:
-                hashtag[automatedservicenotification.hasthetagofthecertaintrend] = automatedservicenotification.retweets
-            else:
-                hashtag[automatedservicenotification.hasthetagofthecertaintrend] += automatedservicenotification.retweets
-    best = []
-    for tabby in hashtag:
-        best.append([tabby, hashtag[tabby], tabby.replace("#", "")])
-    
-    s = []
-    for aba in sorted(best, key = lambda twt : (twt[1]*-1, twt[2])):
-        s.append(aba[0])
-    return s
+    hashtags = {}
+    for twt in tweets:
+        for word in twt.content.split():
+            if word[0] == "#":
+                if word not in hashtags:
+                    hashtags[word] = twt.retweets
+                else:
+                    hashtags[word] += twt.retweets
+    sorthash = sorted(hashtags, key = lambda twt : (-hashtags[twt], twt))
+    print(sorthash)
+    return sorthash
     pass
 
 
